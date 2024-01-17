@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.app.mapper.BoardMapper">
+    <select id="selectAll" resultType="boardVO">
+        SELECT BOARD_ID,BOARD_TITLE,BOARD_WRITER,BOARD_CONTENT,BOARD_REGISTER_DATE,BOARD_UPDATE_DATE
+        FROM
+        (
+            SELECT ROWNUM R, BOARD_ID,BOARD_TITLE,BOARD_WRITER,BOARD_CONTENT,BOARD_REGISTER_DATE,BOARD_UPDATE_DATE
+            FROM
+            (
+                SELECT BOARD_ID,BOARD_TITLE,BOARD_WRITER,BOARD_CONTENT,BOARD_REGISTER_DATE,BOARD_UPDATE_DATE
+                FROM TBL_BOARD
+                ORDER BY BOARD_ID DESC
+            ) B
+            <![CDATA[WHERE ROWNUM <=#{page} * #{rowCount}]]>
+        )
+        WHERE R > (#{page} - 1) * #{rowCount}
+    </select>
+
+    <select id="select" resultType="boardVO">
+        SELECT BOARD_ID,BOARD_TITLE,BOARD_WRITER,BOARD_CONTENT,BOARD_REGISTER_DATE,BOARD_UPDATE_DATE
+        FROM TBL_BOARD
+        WHERE BOARD_ID = #{boarId}
+    </select>
+
+    <insert id="insert">
+        <selectKey keyProperty="boardId" order="BEFORE" resultType="long">
+            SELECT SEQ_BOARD.nextval FROM DUAL
+        </selectKey>
+
+        "INSERT" INTO TBL_BOARD
+        (BOARD_ID, BOARD_TITLE, BOARD_WRITER, BOARD_CONTENT)
+        VALUES(#{boardId}, #{boardTitle}, #{boardWriter}, #{boardContent})
+    </insert>
+    
+    <delete id="delete">
+        DELETE FROM TBL_BOARD WHERE BOARD_ID = #{boardId}
+    </delete>
+
+    <update id="update">
+        UPDATE TBL_BOARD
+        SET BOARD_TITLE = #{boardTitle}, BOARD_CONTENT = #{boardContent}, BOARD_UPDATE_DATE = SYSDATE
+        WHERE BOARD_ID = #{boardId}
+    </update>
+
+    <select id="selectCountAll" resultType="_int">
+        SELECT COUNT(BOARD_ID)
+        FROM TBL_BOARD
+
+    </select>
+
+
+</mapper>
