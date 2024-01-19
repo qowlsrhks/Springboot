@@ -1,6 +1,7 @@
 package com.example.app.service;
 
 import com.example.app.domain.dto.Criteria;
+import com.example.app.domain.dto.Search;
 import com.example.app.domain.vo.BoardVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -22,11 +23,12 @@ public class ServiceTests {
     }
 
     @Test
-    public void getListTest() {
+    public void getListTest(){
+        Search search = new Search();
         Criteria criteria = new Criteria();
         criteria.setPage(1);
         criteria.create(boardService.getTotal());
-        assertThat(boardService.getList(criteria).size()).isEqualTo(10);
+        assertThat(boardService.getList(search, criteria).size()).isEqualTo(10);
     }
 
     @Test

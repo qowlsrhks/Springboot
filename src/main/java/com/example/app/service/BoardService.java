@@ -2,8 +2,10 @@ package com.example.app.service;
 
 import com.example.app.domain.dao.BoardDAO;
 import com.example.app.domain.dto.Criteria;
+import com.example.app.domain.dto.Search;
 import com.example.app.domain.vo.BoardVO;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +21,9 @@ public class BoardService {
     }
 
     //    게시글 목록
-    public List<BoardVO> getList(Criteria criteria) {
+    public List<BoardVO> getList(Search search,Criteria criteria) {
         criteria.create(getTotal());
-        return boardDAO.findAll(criteria);
+        return boardDAO.findAll(search, criteria);
     }
 
     //    게시글 추가

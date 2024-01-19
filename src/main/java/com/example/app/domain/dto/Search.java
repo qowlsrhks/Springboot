@@ -11,9 +11,9 @@ import java.util.List;
 @Data
 public class Search {
     private String keyword;
-    private String type;
+    private String types;
 
-    public List<String> getType() {
-        return new ArrayList<>(Arrays.asList(type.split("")));
+    public List<String> getTypes() {
+        return new ArrayList<>(Arrays.asList(types.split("")));
     }
 }

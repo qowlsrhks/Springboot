@@ -1,9 +1,11 @@
 package com.example.app.domain.dao;
 
 import com.example.app.domain.dto.Criteria;
+import com.example.app.domain.dto.Search;
 import com.example.app.domain.vo.BoardVO;
 import com.example.app.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,8 +21,8 @@ public class BoardDAO {
     }
 
     //    게시글 목록
-    public List<BoardVO> findAll(Criteria criteria) {
-        return boardMapper.selectAll(criteria);
+    public List<BoardVO> findAll(Search search,Criteria criteria) {
+        return boardMapper.selectAll(search,criteria);
     }
 
     //    게시글 추가

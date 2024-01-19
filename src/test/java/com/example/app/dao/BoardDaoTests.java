@@ -2,6 +2,7 @@ package com.example.app.dao;
 
 import com.example.app.domain.dao.BoardDAO;
 import com.example.app.domain.dto.Criteria;
+import com.example.app.domain.dto.Search;
 import com.example.app.domain.vo.BoardVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -24,10 +25,11 @@ public class BoardDaoTests {
 
     @Test
     public void findAllTest() {
+        Search search = new Search();
         Criteria criteria = new Criteria();
         criteria.setPage(1);
         criteria.create(boardDAO.findCountAll());
-        assertThat(boardDAO.findAll(criteria).size()).isEqualTo(10);
+        assertThat(boardDAO.findAll(search, criteria).size()).isEqualTo(10);
     }
 
     @Test

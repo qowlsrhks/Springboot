@@ -1,6 +1,7 @@
 package com.example.app.controller;
 
 import com.example.app.domain.dto.Criteria;
+import com.example.app.domain.dto.Search;
 import com.example.app.domain.vo.BoardVO;
 import com.example.app.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,8 @@ public class BoardController {
 
     //   게시글 목록
     @GetMapping("list")
-    public void showList(Criteria criteria, Model model) {
-        model.addAttribute("boards", boardService.getList(criteria));
+    public void showList(Search search, Criteria criteria, Model model) {
+        model.addAttribute("boards", boardService.getList(search, criteria));
     }
 
 //    게시글 조회

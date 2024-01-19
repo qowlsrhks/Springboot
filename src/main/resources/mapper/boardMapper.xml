@@ -10,11 +10,32 @@
             (
                 SELECT BOARD_ID,BOARD_TITLE,BOARD_WRITER,BOARD_CONTENT,BOARD_REGISTER_DATE,BOARD_UPDATE_DATE
                 FROM TBL_BOARD
+                <if test="search.keyword != null">
+                    <where>
+                        <trim prefixOverrides="OR">
+                            <foreach item="type" collection="search.types">
+                                <trim prefix="OR">
+                                    <choose>
+                                        <when test="type == 't'.toString()">
+                                            BOARD_TITLE  LIKE '%' || #{search.keyword} || '%'
+                                        </when>
+                                        <when test="type == 'w'.toString()">
+                                            BOARD_WRITER  LIKE '%' || #{search.keyword} || '%'
+                                        </when>
+                                        <when test="type == 'c'.toString()">
+                                            BOARD_CONTENT  LIKE '%' || #{search.keyword} || '%'
+                                        </when>
+                                    </choose>
+                                </trim>
+                            </foreach>
+                        </trim>
+                    </where>
+                </if>
                 ORDER BY BOARD_ID DESC
             ) B
-            <![CDATA[WHERE ROWNUM <=#{page} * #{rowCount}]]>
+            <![CDATA[WHERE ROWNUM <= #{cri.page} * #{cri.rowCount}]]>
         )
-        WHERE R > (#{page} - 1) * #{rowCount}
+        WHERE R > (#{cri.page} - 1) * #{cri.rowCount}
     </select>
 
     <select id="select" resultType="boardVO">

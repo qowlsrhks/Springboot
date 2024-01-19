@@ -1,6 +1,7 @@
 package com.example.app.mapper;
 
 import com.example.app.domain.dto.Criteria;
+import com.example.app.domain.dto.Search;
 import com.example.app.domain.vo.BoardVO;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -24,10 +25,15 @@ public class BoardMapperTests {
 
     @Test
     public void selectAllTest() {
+        Search search = new Search();
         Criteria criteria = new Criteria();
-        criteria.setPage(2);
+
+        search.setTypes("t");
+        search.setKeyword("Spring");
+
+        criteria.setPage(1);
         criteria.create(boardMapper.selectCountAll());
-        assertThat(boardMapper.selectAll(criteria).size()).isEqualTo(10);
+        assertThat(boardMapper.selectAll(search, criteria).size()).isEqualTo(2);
     }
 
     @Test
