@@ -40,11 +40,14 @@
                 <p>게시글 수정</p>
             </header>
             <!-- Table -->
-            <h3><a class="list button small" th:href="@{/board/list}">목록 보기</a></h3>
+            <h3><a class="list button small" th:href="@{/board/list(page=${criteria.page}, type=${search.type}, keyword=${search.keyword})}">목록 보기</a></h3>
             <div class="content">
                 <div class="form">
 <!--                    <form method="post" id="updateForm" enctype="multipart/form-data">-->
                     <form th:action="@{/board/modify}" method="post" id="updateForm" th:object="${boardVO}">
+                        <input type="hidden" name="page" th:value="${criteria.page}">
+                        <input type="hidden" name="type" th:value="${search.type}">
+                        <input type="hidden" name="keyword" th:value="${search.keyword}">
                         <div class="fields">
                             <div class="field">
                                 <h4>번호</h4>

@@ -22,7 +22,7 @@ public class BoardService {
 
     //    게시글 목록
     public List<BoardVO> getList(Search search,Criteria criteria) {
-        criteria.create(getTotal());
+        criteria.create(getTotal(search));
         return boardDAO.findAll(search, criteria);
     }
 
@@ -42,8 +42,8 @@ public class BoardService {
     }
 
     //    전체 게시글 조회
-    public int getTotal() {
-        return boardDAO.findCountAll();
+    public int getTotal(Search search) {
+        return boardDAO.findCountAll(search);
     }
 
 }

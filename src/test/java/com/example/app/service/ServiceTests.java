@@ -26,9 +26,11 @@ public class ServiceTests {
     public void getListTest(){
         Search search = new Search();
         Criteria criteria = new Criteria();
+        search.setType("twc");
+        search.setKeyword("Spring");
         criteria.setPage(1);
-        criteria.create(boardService.getTotal());
-        assertThat(boardService.getList(search, criteria).size()).isEqualTo(10);
+        criteria.create(boardService.getTotal(search));
+        assertThat(boardService.getList(search, criteria).size()).isEqualTo(2);
     }
 
     @Test

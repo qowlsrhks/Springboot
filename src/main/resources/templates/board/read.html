@@ -39,7 +39,7 @@
                 <p>게시글 상세보기</p>
             </header>
             <!-- Table -->
-            <h3><a class="list button small" th:href="@{/board/list}">목록 보기</a></h3>
+            <h3><a class="list button small" th:href="@{/board/list(page=${criteria.page}, type=${search.type}, keyword=${search.keyword})}">목록 보기</a></h3>
             <div class="content">
                 <div class="form" th:object="${boardVO}">
                     <form th:action="@{/board/remove(boardId = *{boardId})}">
@@ -113,9 +113,12 @@
 
 <script th:inline="javascript">
     let boardId = [[${boardVO.boardId}]];
+    let page = [[${criteria.page}]];
+    let type = [[${search.type}]];
+    let keyword = [[${search.keyword}]];
 
     function modify() {
-        location.href = "/board/modify?boardId=" + boardId;
+        location.href = `/board/modify?boardId=${boardId}&page=${page}&type=${type}&keyword=${keyword}` ;
     }
 
 </script>

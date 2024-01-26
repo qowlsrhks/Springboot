@@ -28,13 +28,13 @@ public class BoardController {
 //    게시글 조회
 
     @GetMapping(value = {"read","modify"})
-    public void getBoard(Long boardId, Model model) {
+    public void getBoard(Search search, Criteria criteria, Long boardId, Model model) {
         model.addAttribute(boardService.getBoard(boardId));
 
     }
 
     @GetMapping("write")
-    public void write(Model model) {
+    public void write(Search search, Criteria criteria, Model model) {
         model.addAttribute(new BoardVO());
     }
 
@@ -66,9 +66,11 @@ public class BoardController {
 //    게시글 수정
 
     @PostMapping("modify")
-    public RedirectView modify(BoardVO boardVO, RedirectAttributes redirectAttributes) {
+    public RedirectView modify(Criteria criteria,Search search, BoardVO boardVO, RedirectAttributes redirectAttributes) {
         boardService.modify(boardVO);
         redirectAttributes.addAttribute("boardId", boardVO.getBoardId());
+        redirectAttributes.addFlashAttribute(criteria);
+        redirectAttributes.addFlashAttribute(search);
         return new RedirectView("/board/read");
     }
 }

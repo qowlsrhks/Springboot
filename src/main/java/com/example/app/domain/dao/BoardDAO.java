@@ -41,8 +41,8 @@ public class BoardDAO {
     }
 
     //    전체 게시글 조회
-    public int findCountAll() {
-        return boardMapper.selectCountAll();
+    public int findCountAll(Search search) {
+        return boardMapper.selectCountAll(search);
     }
 
 

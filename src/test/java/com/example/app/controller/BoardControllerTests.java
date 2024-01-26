@@ -27,8 +27,11 @@ public class BoardControllerTests {
 
     @Test
     public void showListTest() throws Exception {                                //.andReturn() 주소창에 쓰고 엔터를 치는 것과 동일
-        log.info(mockMvc.perform(MockMvcRequestBuilders.get("/board/list").param("page","1")).andReturn()
-                .getModelAndView().getModelMap().toString());
+        log.info(mockMvc.perform(MockMvcRequestBuilders.get("/board/list")
+                        .param("page","1")
+                        .param("type","twc")
+                        .param("keyword","테스트 제목1")
+                ).andReturn().getModelAndView().getModelMap().toString());
         //model에 담겨져있는것을 toString으로 출력
     }
 
@@ -42,9 +45,9 @@ public class BoardControllerTests {
     @Test
     public void writeTest() throws Exception {
         log.info(mockMvc.perform(MockMvcRequestBuilders.post("/board/write")
-                .param("boardTitle", "테스트제목8")
-                .param("boardContent", "테스트내용8")
-                .param("boardWriter", "테스트8")
+                .param("boardTitle", "새로운 제목")
+                .param("boardContent", "새로운 내용")
+                .param("boardWriter", "Deruco")
         ).andReturn().getFlashMap().toString());
     }
 

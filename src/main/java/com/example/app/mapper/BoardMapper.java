@@ -27,5 +27,5 @@ public interface BoardMapper {
     public void update(BoardVO boardVO);
 
     //    전체 게시글 조회
-    public int selectCountAll();
+    public int selectCountAll(@Param("search") Search search);
 }

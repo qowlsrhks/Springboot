@@ -27,9 +27,11 @@ public class BoardDaoTests {
     public void findAllTest() {
         Search search = new Search();
         Criteria criteria = new Criteria();
+        search.setType("c");
+        search.setKeyword("재밌어");
         criteria.setPage(1);
-        criteria.create(boardDAO.findCountAll());
-        assertThat(boardDAO.findAll(search, criteria).size()).isEqualTo(10);
+        criteria.create(boardDAO.findCountAll(search));
+        assertThat(boardDAO.findAll(search, criteria).size()).isEqualTo(2);
     }
 
     @Test

@@ -4,7 +4,6 @@ import com.example.app.domain.dto.Criteria;
 import com.example.app.domain.dto.Search;
 import com.example.app.domain.vo.BoardVO;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,23 +27,23 @@ public class BoardMapperTests {
         Search search = new Search();
         Criteria criteria = new Criteria();
 
-        search.setTypes("t");
+        search.setType("t");
         search.setKeyword("Spring");
 
         criteria.setPage(1);
-        criteria.create(boardMapper.selectCountAll());
+        criteria.create(boardMapper.selectCountAll(search));
         assertThat(boardMapper.selectAll(search, criteria).size()).isEqualTo(2);
     }
 
     @Test
     public void insertTest() {
         BoardVO boardVO = new BoardVO();
-        boardVO.setBoardTitle("테스트제목5");
-        boardVO.setBoardWriter("테스트5");
-        boardVO.setBoardContent("테스트내용5");
+        boardVO.setBoardTitle("새로운 제목");
+        boardVO.setBoardContent("새로운 내용");
+        boardVO.setBoardWriter("Deruco");
         boardMapper.insert(boardVO);
 
-        assertThat(boardVO.getBoardId()).isEqualTo(5L);
+        assertThat(boardVO.getBoardId()).isEqualTo(2067L);
     }
 
     @Test

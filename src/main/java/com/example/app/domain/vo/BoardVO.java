@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 public class BoardVO {
     private Long boardId;
     private String boardTitle;
-    private String boardWriter;
     private String boardContent;
+    private String boardWriter;
     private String boardRegisterDate;
     private String boardUpdateDate;
 }

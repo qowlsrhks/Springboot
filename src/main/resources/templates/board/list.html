@@ -51,7 +51,7 @@
                     <th:block th:each="board:${boards}">
                         <tr th:object="${board}">
                             <td class="bno" th:text="*{boardId}"></td>
-                            <td class="title"><a th:href="@{/board/read(boardId = *{boardId})}"  th:text="*{boardTitle}"></a></td>
+                            <td class="title"><a th:href="@{/board/read(boardId = *{boardId},page=${criteria.page}, type=${search.type}, keyword=${search.keyword})}"  th:text="*{boardTitle}"></a></td>
                             <td class="writer" th:text="*{boardWriter}"></td>
                             <td class="regDate" th:text="*{boardRegisterDate}"></td>
                             <td class="updateDate" th:text="*{boardUpdateDate}"></td>
@@ -59,35 +59,36 @@
                     </th:block>
                     </tbody>
                 </table>
-                <form name="searchForm">
+                <form th:action="@{/board/list}" name="searchForm" th:object="${criteria}">
+                    <input type="hidden" name="page" th:value="*{page}">
                     <div class="fields">
                         <div class="field">
                             <div id="searchWrap">
-                                <select name="types">
+                                <select name="type">
                                     <option value="">검색 기준</option>
-                                    <option value="tcw">전체</option>
-                                    <option value="t">제목</option>
-                                    <option value="c">내용</option>
-                                    <option value="w">작성자</option>
-                                    <option value="tc">제목 또는 내용</option>
-                                    <option value="tw">제목 또는 작성자</option>
-                                    <option value="cw">내용 또는 작성자</option>
+                                    <option value="tcw" th:selected="${search.type == 'tcw'}">전체</option>
+                                    <option value="t" th:selected="${search.type == 't'}">제목</option>
+                                    <option value="c" th:selected="${search.type == 'c'}">내용</option>
+                                    <option value="w" th:selected="${search.type == 'w'}">작성자</option>
+                                    <option value="tc" th:selected="${search.type == 'tc'}">제목 또는 내용</option>
+                                    <option value="tw" th:selected="${search.type == 'tw'}">제목 또는 작성자</option>
+                                    <option value="cw" th:selected="${search.type == 'cw'}">내용 또는 작성자</option>
                                 </select>
-                                <input type="text" name="keyword">
-                                <a href="" class="search button primary icon solid fa-search">검색</a>
+                                <input type="text" name="keyword" th:value="${search.keyword}">
+                                <a class="search button primary icon solid fa-search">검색</a>
                             </div>
                         </div>
                     </div>
                 </form>
                 <!--페이징 처리-->
-                <div class="paging-wrap">
-                    <div th:object="${criteria}">
-                        <a th:if="*{prev}" th:href="@{/board/list(page=*{startPage - 1})}"><code>이전</code></a>
+                <div class="paging-wrap" th:object="${criteria}">
+                    <div>
+                        <a class="change-page" th:if="*{prev}" th:href="*{startPage - 1}"><code>이전</code></a>
                         <th:block th:each="page:${#numbers.sequence(criteria.startPage, criteria.endPage)}">
-                            <a th:if="${criteria.page != page}" th:href="@{/board/list(page=${page})}" th:text="${page}"><code th:text="${page}"></code></a>
+                            <a class="change-page" th:if="${criteria.page != page}" th:href="${page}" th:text="${page}"><code th:text="${page}"></code></a>
                             <code th:unless="${criteria.page != page}" th:text="${page}"></code>
                         </th:block>
-                        <a th:if="*{next}" th:href="@{/board/list(page=*{endPage + 1})}"><code>다음</code></a>
+                        <a class="change-page" th:if="*{next}" th:href="*{endPage + 1}"><code>다음</code></a>
                     </div>
                 </div>
             </div>
@@ -102,4 +103,16 @@
 <script src="/js/breakpoints.min.js"></script>
 <script src="/js/util.js"></script>
 <script src="/js/main.js"></script>
+<script>
+    $("a.fa-search").on("click", e =>{
+        e.preventDefault();
+        $("form[name=searchForm]").submit();
+    })
+
+    $("a.change-page").on("click", function (e){
+        e.preventDefault();
+        $("input[name=page]").val($(this).attr("href"));
+        $("form[name=searchForm]").submit();
+    })
+</script>
 </html>

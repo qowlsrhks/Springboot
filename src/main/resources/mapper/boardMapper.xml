@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.app.mapper.BoardMapper">
+    <sql id="search">
+        <if test="search.keyword != null">
+            <where>
+                <trim prefixOverrides="OR">
+                    <foreach item="type" collection="search.types">
+                        <trim prefix="OR">
+                            <choose>
+                                <when test="type == 't'.toString()">
+                                    BOARD_TITLE  LIKE '%' || #{search.keyword} || '%'
+                                </when>
+                                <when test="type == 'w'.toString()">
+                                    BOARD_WRITER  LIKE '%' || #{search.keyword} || '%'
+                                </when>
+                                <when test="type == 'c'.toString()">
+                                    BOARD_CONTENT  LIKE '%' || #{search.keyword} || '%'
+                                </when>
+                            </choose>
+                        </trim>
+                    </foreach>
+                </trim>
+            </where>
+        </if>
+    </sql>
     <select id="selectAll" resultType="boardVO">
         SELECT BOARD_ID,BOARD_TITLE,BOARD_WRITER,BOARD_CONTENT,BOARD_REGISTER_DATE,BOARD_UPDATE_DATE
         FROM
@@ -10,27 +33,7 @@
             (
                 SELECT BOARD_ID,BOARD_TITLE,BOARD_WRITER,BOARD_CONTENT,BOARD_REGISTER_DATE,BOARD_UPDATE_DATE
                 FROM TBL_BOARD
-                <if test="search.keyword != null">
-                    <where>
-                        <trim prefixOverrides="OR">
-                            <foreach item="type" collection="search.types">
-                                <trim prefix="OR">
-                                    <choose>
-                                        <when test="type == 't'.toString()">
-                                            BOARD_TITLE  LIKE '%' || #{search.keyword} || '%'
-                                        </when>
-                                        <when test="type == 'w'.toString()">
-                                            BOARD_WRITER  LIKE '%' || #{search.keyword} || '%'
-                                        </when>
-                                        <when test="type == 'c'.toString()">
-                                            BOARD_CONTENT  LIKE '%' || #{search.keyword} || '%'
-                                        </when>
-                                    </choose>
-                                </trim>
-                            </foreach>
-                        </trim>
-                    </where>
-                </if>
+                <include refid="search"/>
                 ORDER BY BOARD_ID DESC
             ) B
             <![CDATA[WHERE ROWNUM <= #{cri.page} * #{cri.rowCount}]]>
@@ -49,9 +52,9 @@
             SELECT SEQ_BOARD.nextval FROM DUAL
         </selectKey>
 
-        "INSERT" INTO TBL_BOARD
-        (BOARD_ID, BOARD_TITLE, BOARD_WRITER, BOARD_CONTENT)
-        VALUES(#{boardId}, #{boardTitle}, #{boardWriter}, #{boardContent})
+        INSERT INTO TBL_BOARD
+        (BOARD_ID, BOARD_TITLE, BOARD_CONTENT, BOARD_WRITER)
+        VALUES(#{boardId}, #{boardTitle}, #{boardContent}, #{boardWriter})
     </insert>
     
     <delete id="delete">
@@ -67,7 +70,7 @@
     <select id="selectCountAll" resultType="_int">
         SELECT COUNT(BOARD_ID)
         FROM TBL_BOARD
-
+        <include refid="search"/>
     </select>
 
 
