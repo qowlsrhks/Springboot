@@ -59,7 +59,7 @@
                             </div>
                             <div class="field">
                                 <h4>첨부파일</h4>
-                                <input type="file" name="upload" multiple>
+                                <input type="file" name="multipartFiles" multiple>
                             </div>
                             <div class="field">
                                 <div class="uploadResult">
@@ -85,12 +85,20 @@
 <script src="/js/main.js"></script>
 <script>
     FileList.prototype.forEach = Array.prototype.forEach;
+    const $ul = $("div.uploadResult ul");
+    let arFile = new Array();
 
     $("input[type=file]").on("change",e =>{
+        const dataTransfer = new DataTransfer();
         let formData = new FormData();
         e.target.files.forEach(file =>{
-            formData.append("upload",file);
+            arFile.push(file);
+            formData.append("multipartFiles",file);
         });
+
+        arFile.forEach(file => dataTransfer.items.add(file));
+
+        e.target.files = dataTransfer.files;
 
         $.ajax({
             url: "/files/upload",
@@ -98,9 +106,34 @@
             data: formData,
             processData : false,
             contentType : false,
-            success: function (){console.log("성공");}
-        })
+            success: function (files){
+                let text = "";
+                files.forEach(file => {
+                    text +=`<li>`
+                    text += `<img class="file-cancel" src="/images/cancel_icon.png" width="25" style="position : absolute; right: 0; cursor: pointer;">`;
+                    if(file.fileIsImage){
+                        text += `<img src="/files/display?filePath=${file.fileUploadPath}/t_${file.fileUuid}_${file.fileName}">`
+                    }else {
+                        text += `<img src="/images/attach.png" width="100">`
+                    }
+                    `
+                        </li>
+                    `
 
+                });
+                $ul.append(text);
+            }
+        });
+    });
+
+    $ul.on("click", "img.file-cancel", function () {
+        const dataTransfer = new DataTransfer();
+         let i = $("img.file-cancel").index(this);
+        // Array객체에서 원하는 인덱스 삭제
+        arFile.splice(i, 1);
+        arFile.forEach(file => dataTransfer.items.add(file));
+        $("input[type=file]")[0].files = dataTransfer.files;
+        $(this).closest("li").remove();
     });
 </script>
 </html>

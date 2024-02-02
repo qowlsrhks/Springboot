@@ -13,3 +13,10 @@ spring:
       jdbc-url: jdbc:log4jdbc:oracle:thin:@localhost:1521:XE
       username: C##QOWLSRHKS
       password: wlsrhks0
+
+
+#multipart
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 100MB
