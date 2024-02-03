@@ -1,10 +1,13 @@
 package com.example.app.controller;
 
+import com.example.app.domain.dto.BoardDTO;
 import com.example.app.domain.dto.Criteria;
 import com.example.app.domain.dto.Search;
 import com.example.app.domain.vo.BoardVO;
+import com.example.app.domain.vo.FileVO;
 import com.example.app.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/board/*")
+@Slf4j
 public class BoardController {
     private final BoardService boardService;
 
@@ -46,13 +50,13 @@ public class BoardController {
      * redirect 방식은 컨트롤러로 간다
      * */
     @PostMapping("write")
-    public RedirectView write(BoardVO boardVO, RedirectAttributes redirectAttributes) {
-
-        boardService.write(boardVO);
+    public RedirectView write(BoardDTO boardDTO, RedirectAttributes redirectAttributes) {
+        boardDTO.getFiles().stream().map(FileVO::getFileName).forEach(log::info);
+//        boardService.write(boardDTO);
 //        자동으로 쿼리 스트링으로 작성되며, 다음 컨트롤러에 데이터를 전달할 때 사용한다
 //        redirectAttributes.addAttribute("boardId", boardVO.getBoardId());
 //        Session에 있는 flash영역을 사용하여 request객체가 초기화 된 후 기존 정보들을 다시 담아줌으로써 화면에 데이터를 전달할 수있다.
-        redirectAttributes.addFlashAttribute("boardId", boardVO.getBoardId());
+//        redirectAttributes.addFlashAttribute("boardId", boardDTO);
         return new RedirectView("/board/list");
     }
 

@@ -43,7 +43,7 @@
             <div class="content">
                 <div class="form">
 <!--                    <form method="post" id="writeForm" enctype="multipart/form-data" th:object="${boardVO}">-->
-                    <form th:action="@{/board/write}" method="post" id="writeForm" enctype="multipart/form-data" th:object="${boardVO}">
+                    <form th:action="@{/board/write}" method="post" name="writeForm" th:object="${boardVO}">
                         <div class="fields">
                             <div class="field">
                                 <h4>제목</h4>
@@ -68,7 +68,7 @@
                             </div>
                         </div>
                         <ul class="actions special">
-                            <li><input type="submit" class="button" value="등록" /></li>
+                            <li><input type="button" class="button register-button" value="등록" /></li>
                         </ul>
                     </form>
                 </div>
@@ -86,7 +86,24 @@
 <script>
     FileList.prototype.forEach = Array.prototype.forEach;
     const $ul = $("div.uploadResult ul");
+    const $registerButton = $("input.register-button");
     let arFile = new Array();
+
+    $registerButton.on("click",function (){
+        let text = "";
+        $ul.children("li").each((i, li) =>{
+        let $li = $(li);
+        text +=`
+            <input type="hidden" name="files[${i}].fileName" value="${$li.data("file-name")}">
+            <input type="hidden" name="files[${i}].fileUploadPath" value="${$li.data("file-upload-path")}">
+            <input type="hidden" name="files[${i}].fileUuid" value="${$li.data("file-uuid")}">
+            <input type="hidden" name="files[${i}].fileSize" value="${$li.data("file-size")}">
+            <input type="hidden" name="files[${i}].fileIsImage" value="${$li.data("file-is-image")}">
+        `
+        });
+        $("form[name=writeForm]").append(text);
+        $("form[name=writeForm]").submit();
+    });
 
     $("input[type=file]").on("change",e =>{
         const dataTransfer = new DataTransfer();
@@ -109,7 +126,7 @@
             success: function (files){
                 let text = "";
                 files.forEach(file => {
-                    text +=`<li>`
+                    text +=`<li data-file-name="${file.fileName}" data-file-upload-path="${file.fileUploadPath}" data-file-uuid="${file.uuid}" data-file-size="${file.fileSize}" data-file-is-image="${file.fileIsImage}">`
                     text += `<img class="file-cancel" src="/images/cancel_icon.png" width="25" style="position : absolute; right: 0; cursor: pointer;">`;
                     if(file.fileIsImage){
                         text += `<img src="/files/display?filePath=${file.fileUploadPath}/t_${file.fileUuid}_${file.fileName}">`
