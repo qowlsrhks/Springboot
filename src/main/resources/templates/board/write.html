@@ -43,7 +43,7 @@
             <div class="content">
                 <div class="form">
 <!--                    <form method="post" id="writeForm" enctype="multipart/form-data" th:object="${boardVO}">-->
-                    <form th:action="@{/board/write}" method="post" name="writeForm" th:object="${boardVO}">
+                    <form th:action="@{/board/write}" method="post" name="writeForm" th:object="${boardDTO}">
                         <div class="fields">
                             <div class="field">
                                 <h4>제목</h4>
@@ -101,7 +101,7 @@
             <input type="hidden" name="files[${i}].fileIsImage" value="${$li.data("file-is-image")}">
         `
         });
-        $("form[name=writeForm]").append(text);
+        $("form[name=writeForm]").append(text)
         $("form[name=writeForm]").submit();
     });
 
@@ -126,16 +126,17 @@
             success: function (files){
                 let text = "";
                 files.forEach(file => {
-                    text +=`<li data-file-name="${file.fileName}" data-file-upload-path="${file.fileUploadPath}" data-file-uuid="${file.uuid}" data-file-size="${file.fileSize}" data-file-is-image="${file.fileIsImage}">`
+                    text +=`<li data-file-name="${file.fileName}" data-file-upload-path="${file.fileUploadPath}" data-file-uuid="${file.fileUuid}" data-file-size="${file.fileSize}" data-file-is-image="${file.fileIsImage}">`
                     text += `<img class="file-cancel" src="/images/cancel_icon.png" width="25" style="position : absolute; right: 0; cursor: pointer;">`;
                     if(file.fileIsImage){
                         text += `<img src="/files/display?filePath=${file.fileUploadPath}/t_${file.fileUuid}_${file.fileName}">`
                     }else {
                         text += `<img src="/images/attach.png" width="100">`
                     }
-                    `
-                        </li>
-                    `
+                    text+=`
+                                 <p style="font-size: 10px">${file.fileName}(${file.fileSize}KB)</p>
+                            </li>
+                         `
 
                 });
                 $ul.append(text);

@@ -1,19 +1,24 @@
 package com.example.app.service;
 
 import com.example.app.domain.dao.BoardDAO;
+import com.example.app.domain.dao.FileDAO;
+import com.example.app.domain.dto.BoardDTO;
 import com.example.app.domain.dto.Criteria;
 import com.example.app.domain.dto.Search;
 import com.example.app.domain.vo.BoardVO;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.Transient;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardDAO boardDAO;
+    private final FileDAO fileDAO;
 
     //    게시글 조회
     public BoardVO getBoard(Long boardId) {
@@ -27,8 +32,15 @@ public class BoardService {
     }
 
     //    게시글 추가
-    public void write(BoardVO boardVo) {
-        boardDAO.save(boardVo);
+    @Transactional(rollbackFor = Exception.class)
+    public void write(BoardDTO boardDTO) {
+        BoardVO boardVO = boardDTO.toVO();
+        boardDAO.save(boardVO);
+
+        boardDTO.getFiles().forEach(file -> {
+            file.setBoardId(boardVO.getBoardId());
+            fileDAO.save(file);
+        });
     }
 
     //    게시글 삭제
@@ -37,8 +49,14 @@ public class BoardService {
     }
 
     //    게시글 수정
-    public void modify(BoardVO boardVO) {
-        boardDAO.setBoard(boardVO);
+    @Transactional(rollbackFor = Exception.class)
+    public void modify(BoardDTO boardDTO) {
+        boardDAO.setBoard(boardDTO.toVO());
+
+        boardDTO.getFiles().forEach(file -> {
+            file.setBoardId(boardDTO.getBoardId());
+            fileDAO.save(file);
+        });
     }
 
     //    전체 게시글 조회

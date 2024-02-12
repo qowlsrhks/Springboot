@@ -1,6 +1,8 @@
 package com.example.app.domain.dto;
 
+import com.example.app.domain.vo.BoardVO;
 import com.example.app.domain.vo.FileVO;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,17 @@ public class BoardDTO {
     private String boardWriter;
     private String boardRegisterDate;
     private String boardUpdateDate;
-
     private List<FileVO> files;
+
+    public BoardVO toVO() {
+        return BoardVO.builder()
+                .boardId(boardId)
+                .boardTitle(boardTitle)
+                .boardWriter(boardWriter)
+                .boardContent(boardContent)
+                .boardRegisterDate(boardRegisterDate)
+                .boardUpdateDate(boardUpdateDate)
+                .build();
+    }
+
 }

@@ -44,7 +44,7 @@
             <div class="content">
                 <div class="form">
 <!--                    <form method="post" id="updateForm" enctype="multipart/form-data">-->
-                    <form th:action="@{/board/modify}" method="post" id="updateForm" th:object="${boardVO}">
+                    <form th:action="@{/board/modify}" method="post" name="updateForm" th:object="${boardVO}">
                         <input type="hidden" name="page" th:value="${criteria.page}">
                         <input type="hidden" name="type" th:value="${search.type}">
                         <input type="hidden" name="keyword" th:value="${search.keyword}">
@@ -77,7 +77,7 @@
                         </div>
                         <ul class="actions special">
                             <li>
-                                <input type="submit" class="button" value="수정 완료"/>
+                                <input type="button" class="button-update-button" value="수정 완료"/>
                             </li>
                         </ul>
                     </form>
@@ -93,4 +93,113 @@
 <script src="/js/breakpoints.min.js"></script>
 <script src="/js/util.js"></script>
 <script src="/js/main.js"></script>
+<script th:inline="javascript">
+
+    FileList.prototype.forEach = Array.prototype.forEach;
+    let files = [[${files}]];
+    let arFile = new Array();
+    let arListTag = new Array();
+    let arDeletedFile = new Array();
+    let i = 0;
+    const $ul = $("div.uploadResult ul");
+    const $updateButton = $("input.button-update-button")
+
+
+
+
+    showThumbnail();
+
+    $("input[type=file]").on("change",e =>{
+        const dataTransfer = new DataTransfer();
+        let formData = new FormData();
+        e.target.files.forEach(file =>{
+            arFile.push(file);
+            formData.append("multipartFiles",file);
+        });
+
+        arFile.forEach(file => dataTransfer.items.add(file));
+
+        e.target.files = dataTransfer.files;
+
+        $.ajax({
+            url: "/files/upload",
+            type: "post",
+            data: formData,
+            processData : false,
+            contentType : false,
+            success: function (files){
+                let text = "";
+                files.forEach(file => {
+                    text +=`<li class ="new" data-file-name="${file.fileName}" data-file-upload-path="${file.fileUploadPath}" data-file-uuid="${file.fileUuid}" data-file-size="${file.fileSize}" data-file-is-image="${file.fileIsImage}">`
+                    text += `<img class="file-cancel" src="/images/cancel_icon.png" width="25" style="position : absolute; right: 0; cursor: pointer;">`;
+                    if(file.fileIsImage){
+                        text += `<img src="/files/display?filePath=${file.fileUploadPath}/t_${file.fileUuid}_${file.fileName}">`
+                    }else {
+                        text += `<img src="/images/attach.png" width="100">`
+                    }
+                    text+=`
+                            </li>
+                         `
+
+                });
+                $ul.append(text);
+                arListTag.push();
+            }
+        });
+    });
+
+    $updateButton.on("click",function (){
+        let text = "";
+
+        $("input[type=file]")[0].files.forEach((file , i) =>{
+            let $listTag = $("li.new");
+            text +=`
+                <input type="hidden" name="files[${i}].fileName" value="${$listTag.eq(i).data("file-name")}">
+                <input type="hidden" name="files[${i}].fileUploadPath" value="${$listTag.eq(i).data("file-upload-path")}">
+                <input type="hidden" name="files[${i}].fileUuid" value="${$listTag.eq(i).data("file-uuid")}">
+                <input type="hidden" name="files[${i}].fileSize" value="${$listTag.eq(i).data("file-size")}">
+                <input type="hidden" name="files[${i}].fileIsImage" value="${$listTag.eq(i).data("file-is-image")}">
+        `
+        });
+        $("form[name=updateForm]").append(text).submit();
+
+    });
+
+    function showThumbnail(){
+        let text = ""
+
+        files.forEach((file , i) =>{
+            text +=`<li data-file-name="${file.fileName}" data-file-upload-path="${file.fileUploadPath}" data-file-uuid="${file.fileUuid}" data-file-size="${file.fileSize}" data-file-is-image="${file.fileIsImage}">`
+            text += `    <div style="width: 100px; height: 100px">`
+            text += `        <img data-index="${i}" class="file-cancel" src="/images/cancel_icon.png" width="25" style="position : absolute; right: 0; cursor: pointer;">`;
+            if(file.fileIsImage){
+                text +=     `<img src="/files/display?filePath=${file.fileUploadPath}/t_${file.fileUuid}_${file.fileName}">`
+            }else {
+                text +=     `<img src="/images/attach.png" width="100">`
+            }
+            text +=`
+                        </div>
+                        <p style="font-size: 10px">${file.fileName}(${file.fileSize}KB)</p>
+                    </li>
+                  `;
+        });
+        $ul.html(text);
+    }
+
+    let FileTemp;
+
+    $ul.on("click", "img.file-cancel", function () {
+        const dataTransfer = new DataTransfer();
+        let index = $("li.new").index(this.closest("li"));
+        $(this).closest("li").remove();
+        if(index != undefined) {//새롭게 추가된 파일을 취소할 경우
+            arFile.splice(index , 1)
+
+            arFile.forEach(file => dataTransfer.items.add(file));
+            $("input[type=file]")[0].files = dataTransfer.files;
+            i--;
+        }
+    });
+</script>
+
 </html>

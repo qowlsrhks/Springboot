@@ -53,8 +53,8 @@
         </selectKey>
 
         INSERT INTO TBL_BOARD
-        (BOARD_ID, BOARD_TITLE, BOARD_CONTENT, BOARD_WRITER)
-        VALUES(#{boardId}, #{boardTitle}, #{boardContent}, #{boardWriter})
+        (BOARD_ID, BOARD_TITLE, BOARD_WRITER, BOARD_CONTENT)
+        VALUES(#{boardId}, #{boardTitle}, #{boardWriter}, #{boardContent})
     </insert>
     
     <delete id="delete">
