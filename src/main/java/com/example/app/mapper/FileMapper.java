@@ -13,6 +13,9 @@ public interface FileMapper {
     //    파일삭제
     public void delete(Long boardId);
 
+    //    파일 개별 삭제
+    public void deleteFile(Long fileId);
+
     //    파일목록
     public List<FileVO> selectAllByBoardId(Long boardId);
 

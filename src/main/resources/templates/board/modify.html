@@ -100,7 +100,7 @@
     let arFile = new Array();
     let arListTag = new Array();
     let arDeletedFile = new Array();
-    let i = 0;
+    let i = 0, deletedIndex = 0;
     const $ul = $("div.uploadResult ul");
     const $updateButton = $("input.button-update-button")
 
@@ -153,6 +153,7 @@
 
         $("input[type=file]")[0].files.forEach((file , i) =>{
             let $listTag = $("li.new");
+            let $listDeletedTag = $("li.deleted");
             text +=`
                 <input type="hidden" name="files[${i}].fileName" value="${$listTag.eq(i).data("file-name")}">
                 <input type="hidden" name="files[${i}].fileUploadPath" value="${$listTag.eq(i).data("file-upload-path")}">
@@ -161,15 +162,15 @@
                 <input type="hidden" name="files[${i}].fileIsImage" value="${$listTag.eq(i).data("file-is-image")}">
         `
         });
-        $("form[name=updateForm]").append(text).submit();
-
+        $("form[name=updateForm]").append(text)
+        $("form[name=updateForm]").submit();
     });
 
     function showThumbnail(){
         let text = ""
 
         files.forEach((file , i) =>{
-            text +=`<li data-file-name="${file.fileName}" data-file-upload-path="${file.fileUploadPath}" data-file-uuid="${file.fileUuid}" data-file-size="${file.fileSize}" data-file-is-image="${file.fileIsImage}">`
+            text +=`<li class="original" data-file-id="${file.fileId}" data-file-name="${file.fileName}" data-file-upload-path="${file.fileUploadPath}" data-file-uuid="${file.fileUuid}" data-file-size="${file.fileSize}" data-file-is-image="${file.fileIsImage}">`
             text += `    <div style="width: 100px; height: 100px">`
             text += `        <img data-index="${i}" class="file-cancel" src="/images/cancel_icon.png" width="25" style="position : absolute; right: 0; cursor: pointer;">`;
             if(file.fileIsImage){
@@ -191,15 +192,31 @@
     $ul.on("click", "img.file-cancel", function () {
         const dataTransfer = new DataTransfer();
         let index = $("li.new").index(this.closest("li"));
-        $(this).closest("li").remove();
-        if(index != undefined) {//새롭게 추가된 파일을 취소할 경우
+        if(index != -1) {//새롭게 추가된 파일을 취소할 경우
+            $(this).closest("li").remove();
             arFile.splice(index , 1)
 
             arFile.forEach(file => dataTransfer.items.add(file));
             $("input[type=file]")[0].files = dataTransfer.files;
             i--;
+        }else{
+            let text = "";
+            $(this).closest("li").hide();
+            $(this).closest("li").prop("classList").replace("original", "deleted");
+            let $deletedListTag = $(this).closest("li");
+            text +=`
+                <input type="hidden" name="deletedFiles[${deletedIndex}].fileId" value="${$deletedListTag.eq(i).data("file-id")}">
+                <input type="hidden" name="deletedFiles[${deletedIndex}].fileName" value="${$deletedListTag.eq(i).data("file-name")}">
+                <input type="hidden" name="deletedFiles[${deletedIndex}].fileUploadPath" value="${$deletedListTag.eq(i).data("file-upload-path")}">
+                <input type="hidden" name="deletedFiles[${deletedIndex}].fileUuid" value="${$deletedListTag.eq(i).data("file-uuid")}">
+                <input type="hidden" name="deletedFiles[${deletedIndex}].fileSize" value="${$deletedListTag.eq(i).data("file-size")}">
+                <input type="hidden" name="deletedFiles[${deletedIndex}].fileIsImage" value="${$deletedListTag.eq(i).data("file-is-image")}">
+        `
+            $("form[name=updateForm]").append(text);
+            deletedIndex++
         }
     });
+
 </script>
 
 </html>

@@ -6,6 +6,7 @@ import com.example.app.domain.dto.BoardDTO;
 import com.example.app.domain.dto.Criteria;
 import com.example.app.domain.dto.Search;
 import com.example.app.domain.vo.BoardVO;
+import com.example.app.domain.vo.FileVO;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
@@ -53,10 +54,16 @@ public class BoardService {
     public void modify(BoardDTO boardDTO) {
         boardDAO.setBoard(boardDTO.toVO());
 
-        boardDTO.getFiles().forEach(file -> {
-            file.setBoardId(boardDTO.getBoardId());
-            fileDAO.save(file);
-        });
+        if (boardDTO.getFiles() != null) {
+            boardDTO.getFiles().forEach(file -> {
+                file.setBoardId(boardDTO.getBoardId());
+                fileDAO.save(file);
+            });
+        }
+
+        if (boardDTO.getFiles() != null) {
+            boardDTO.getDeletedFiles().stream().map(FileVO::getFileId).forEach(fileDAO::deleteById);
+        }
     }
 
     //    전체 게시글 조회

@@ -12,6 +12,11 @@
         WHERE BOARD_ID = #{boardId}
     </delete>
 
+    <delete id="deleteFile">
+        DELETE FROM TBL_FILE
+        WHERE FILE_ID = #{fileId}
+    </delete>
+
     <select id="selectAllByBoardId" resultType="fileVO">
         SELECT FILE_ID, FILE_NAME, FILE_UPLOAD_PATH, FILE_UUID, FILE_SIZE, FILE_IS_IMAGE, BOARD_ID
         FROM TBL_FILE WHERE BOARD_ID = #{boardId}

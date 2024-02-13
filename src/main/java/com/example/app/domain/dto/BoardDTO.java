@@ -18,6 +18,7 @@ public class BoardDTO {
     private String boardRegisterDate;
     private String boardUpdateDate;
     private List<FileVO> files;
+    private List<FileVO> deletedFiles;
 
     public BoardVO toVO() {
         return BoardVO.builder()

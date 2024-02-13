@@ -18,7 +18,11 @@ public class FileDAO {
 
     //    파일삭제
     public void delete(Long boardId) {
+
         fileMapper.delete(boardId);
+    }
+    public void deleteById(Long fileId) {
+        fileMapper.deleteFile(fileId);
     }
 
     //    파일목록
