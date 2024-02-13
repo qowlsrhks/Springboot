@@ -11,6 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FileDAO {
     private final FileMapper fileMapper;
+
     //    파일추가
     public void save(FileVO fileVO) {
         fileMapper.insert(fileVO);
@@ -21,6 +22,7 @@ public class FileDAO {
 
         fileMapper.delete(boardId);
     }
+
     public void deleteById(Long fileId) {
         fileMapper.deleteFile(fileId);
     }
@@ -28,6 +30,11 @@ public class FileDAO {
     //    파일목록
     public List<FileVO> findAllByBoardId(Long boardId) {
         return fileMapper.selectAllByBoardId(boardId);
+    }
+
+    //    전날 파일 목록
+    public List<FileVO> findByYesteray() {
+        return fileMapper.selectOldFiles();
     }
 
 }

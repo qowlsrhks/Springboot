@@ -43,6 +43,11 @@ public class FileService {
         return fileDAO.findAllByBoardId(boardId);
     }
 
+    //    전날 파일 목록
+    public List<FileVO> getFilesOfYesterDay() {
+        return fileDAO.findByYesteray();
+    }
+
     //    파일 업로드
     @PostMapping("upload")
     public List<FileVO> upload(List<MultipartFile> multipartFiles) throws IOException {

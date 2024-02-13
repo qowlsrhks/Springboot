@@ -19,4 +19,7 @@ public interface FileMapper {
     //    파일목록
     public List<FileVO> selectAllByBoardId(Long boardId);
 
+    //    전날 DB에없는 파일 삭제
+    public List<FileVO> selectOldFiles();
+
 }

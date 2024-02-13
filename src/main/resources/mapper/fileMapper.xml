@@ -21,4 +21,9 @@
         SELECT FILE_ID, FILE_NAME, FILE_UPLOAD_PATH, FILE_UUID, FILE_SIZE, FILE_IS_IMAGE, BOARD_ID
         FROM TBL_FILE WHERE BOARD_ID = #{boardId}
     </select>
+
+    <select id="selectOldFiles" resultType="fileVO">
+        SELECT FILE_ID, FILE_NAME, FILE_UPLOAD_PATH, FILE_UUID, FILE_SIZE, FILE_IS_IMAGE, BOARD_ID
+        FROM TBL_FILE WHERE FILE_UPLOAD_PATH = TO_CHAR(SYSDATE - 1 + 'YYYY/MM/DD')
+    </select>
 </mapper>

@@ -61,7 +61,7 @@ public class BoardService {
             });
         }
 
-        if (boardDTO.getFiles() != null) {
+        if (boardDTO.getDeletedFiles() != null) {
             boardDTO.getDeletedFiles().stream().map(FileVO::getFileId).forEach(fileDAO::deleteById);
         }
     }
