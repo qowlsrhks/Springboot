@@ -4,6 +4,7 @@ import com.example.app.domain.vo.FileVO;
 import com.example.app.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class FileTask {
     private final FileService fileService;
 
+    @Scheduled(cron = "0 * * * * *")
     private void checkFiles() throws IOException {
         log.info("File Checking Task Run....................");
         log.info("==========================================");
@@ -42,11 +44,19 @@ public class FileTask {
 //                Path List에 추가해준다
                 .forEach(pathsOfYesterday::add);
 
+        log.info("=================DB경로===================");
+        pathsOfYesterday.stream().map(Path::toAbsolutePath).map(Path::toString).forEach(log::info);
+
 //        실제 서버 경로를 File 객체에 담아준다
+        log.info("=================서버경로====================");
+        log.info(getUploadPathOfYesterDay());
         File filesInDirectory = Paths.get("C:/upload", getUploadPathOfYesterDay()).toFile();
 //        File객체는 해당 경로의 파일들을 List로 가져올 수 있으며 조건식이 true일 경우만 가져온다.
 //        DB에 없는 파일은 삭제한다
-        Arrays.asList(filesInDirectory.listFiles(file -> !filesOfYesterDayInDB.contains(file.toPath()))).forEach(File::delete);
+        if(filesInDirectory.listFiles() != null){
+            log.info("======================삭제 경로===============");
+            Arrays.asList(filesInDirectory.listFiles(file -> !pathsOfYesterday.contains(file.toPath()))).forEach(File::delete);
+        }
 
     }
 

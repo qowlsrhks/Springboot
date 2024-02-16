@@ -45,7 +45,12 @@ public class BoardService {
     }
 
     //    게시글 삭제
+    @Transactional(rollbackFor = Exception.class)
     public void remove(Long boardId) {
+        List<FileVO> files = fileDAO.findAllByBoardId(boardId);
+        if(files != null){
+            fileDAO.delete(boardId);
+        }
         boardDAO.delete(boardId);
     }
 

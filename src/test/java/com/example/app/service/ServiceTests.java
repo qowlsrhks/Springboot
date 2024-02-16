@@ -1,5 +1,6 @@
 package com.example.app.service;
 
+import com.example.app.domain.dto.BoardDTO;
 import com.example.app.domain.dto.Criteria;
 import com.example.app.domain.dto.Search;
 import com.example.app.domain.vo.BoardVO;
@@ -35,13 +36,13 @@ public class ServiceTests {
 
     @Test
     public void writeTest() {
-        BoardVO boardVO = new BoardVO();
-        boardVO.setBoardTitle("테스트제목6");
-        boardVO.setBoardWriter("테스트6");
-        boardVO.setBoardContent("테스트내용6");
-        boardService.write(boardVO);
+        BoardDTO boardDTO = new BoardDTO();
+        boardDTO.setBoardTitle("테스트제목6");
+        boardDTO.setBoardWriter("테스트6");
+        boardDTO.setBoardContent("테스트내용6");
+        boardService.write(boardDTO);
 
-        assertThat(boardVO.getBoardId()).isEqualTo(8L);
+        assertThat(boardDTO.getBoardId()).isEqualTo(8L);
     }
 
     @Test
