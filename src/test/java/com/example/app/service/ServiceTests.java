@@ -55,6 +55,6 @@ public class ServiceTests {
         BoardVO boardVO = boardService.getBoard(3L);
         boardVO.setBoardTitle("바뀐 제목3");
         boardVO.setBoardContent("바뀐 내용3");
-        boardService.modify(boardVO);
+        boardService.modify(boardVO.toDTO());
     }
 }

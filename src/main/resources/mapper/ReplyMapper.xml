@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.app.mapper.ReplyMapper">
+    <select id="selectAllBoardId" resultType="replyVO">
+        SELECT REPLY_ID, REPLY_CONTENT, REPLY_WRITER, REPLY_REGISTER_DATE, REPLY_UPDATE_DATE, BOARD_ID
+        FROM
+        (
+            SELECT ROWNUM R, REPLY_ID, REPLY_CONTENT, REPLY_WRITER, REPLY_REGISTER_DATE, REPLY_UPDATE_DATE, BOARD_ID
+            FROM
+              (
+                    SELECT REPLY_ID, REPLY_CONTENT, REPLY_WRITER, REPLY_REGISTER_DATE, REPLY_UPDATE_DATE, BOARD_ID
+                    FROM TBL_REPLY
+                    WHERE BOARD_ID = ${boardId}
+                    ORDER BY REPLY_ID DESC
+              )
+            <![CDATA[
+            WHERE ROWNUM <= #{page} * #{rowCount}
+            ]]>
+        )
+        <![CDATA[
+        WHERE R > ((#{page} - 1) * #{rowCount})
+        ]]>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO TBL_REPLY
+        (REPLY_ID,REPLY_CONTENT,REPLY_WRITER,BOARD_ID)
+        VALUES(SEQ_REPLY.nextval, #{replyContent}, #{replyWriter}, #{boardId})
+    </insert>
+
+    <update id="update">
+        UPDATE TBL_REPLY
+        SET REPLY_CONTENT = #{replyContent},REPLY_UPDATE_DATE = SYSDATE
+        WHERE REPLY_ID = #{replyId}
+    </update>
+
+    <delete id="delete">
+        DELETE TBL_REPLY
+        WHERE REPLY_ID = #{replyId}
+    </delete>
+
+</mapper>

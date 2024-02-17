@@ -16,4 +16,14 @@ public class BoardVO {
     private String boardRegisterDate;
     private String boardUpdateDate;
 
+    public BoardDTO toDTO() {
+        BoardDTO boardDTO = new BoardDTO();
+        boardDTO.setBoardId(boardId);
+        boardDTO.setBoardTitle(boardTitle);
+        boardDTO.setBoardContent(boardContent);
+        boardDTO.setBoardRegisterDate(boardRegisterDate);
+        boardDTO.setBoardUpdateDate(boardUpdateDate);
+        return boardDTO;
+    }
+
 }

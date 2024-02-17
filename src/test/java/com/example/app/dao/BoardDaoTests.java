@@ -36,10 +36,11 @@ public class BoardDaoTests {
 
     @Test
     public void saveTest() {
-        BoardVO boardVO = new BoardVO();
-        boardVO.setBoardTitle("테스트제목6");
-        boardVO.setBoardWriter("테스트6");
-        boardVO.setBoardContent("테스트내용6");
+        BoardVO boardVO = BoardVO.builder()
+                .boardTitle("새로운 제목")
+                .boardContent("새로운 내용")
+                .boardWriter("Deruco")
+                .build();
         boardDAO.save(boardVO);
 
         assertThat(boardVO.getBoardId()).isEqualTo(6L);

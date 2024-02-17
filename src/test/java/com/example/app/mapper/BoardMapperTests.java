@@ -37,10 +37,11 @@ public class BoardMapperTests {
 
     @Test
     public void insertTest() {
-        BoardVO boardVO = new BoardVO();
-        boardVO.setBoardTitle("새로운 제목");
-        boardVO.setBoardContent("새로운 내용");
-        boardVO.setBoardWriter("Deruco");
+        BoardVO boardVO = BoardVO.builder()
+                .boardTitle("새로운 제목")
+                .boardContent("새로운 내용")
+                .boardWriter("Deruco")
+                .build();
         boardMapper.insert(boardVO);
 
         assertThat(boardVO.getBoardId()).isEqualTo(2067L);
