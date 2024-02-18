@@ -110,9 +110,14 @@
 <script src="/js/breakpoints.min.js"></script>
 <script src="/js/util.js"></script>
 <script src="/js/main.js"></script>
+<script>
+    let boardId = [[${boardVO.boardId}]]
+    let replyPage = 1;
+    let rowCount = 10;
+</script>
+<script src="/js/reply.js"></script>
 
 <script th:inline="javascript">
-    let boardId = [[${boardVO.boardId}]];
     let page = [[${criteria.page}]];
     let type = [[${search.type}]];
     let keyword = [[${search.keyword}]];
