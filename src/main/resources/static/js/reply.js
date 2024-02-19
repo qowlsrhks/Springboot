@@ -11,13 +11,68 @@ let replyService = (function (){
             }
         })
     }
-    return{getList: getList};
+
+    function write(callback) {
+        $.ajax({
+            url:"/replies/write",
+            type: "post",
+            data:JSON.stringify( {replyWriter : $("input[name='replyWriter']").val(), replyContent: $("textarea[name='replyContent']").val(), boardId:boardId}),
+            contentType: "application/json;charset=utf-8",
+            success: function () {
+                if (callback) {
+                    callback();
+                }
+            }
+        });
+    }
+    return{getList: getList, write: write};
 })();
 
 replyService.getList(showList);
 
-/*###### DOM ########*/
 
+/*###### Event ########*/
+
+$("ul.replies").on("click", "a.modify-ready", function () {
+    let i = $("a.modify-ready").index(this);
+    $(this).hide();
+    $("a.remove").eq(i).hide();
+    $(this).parents("div").append(`<a class="modify" style="cursor: pointer">수정완료</a>`);
+    $(this).parents("div").append(`&nbsp;&nbsp;<a class="modify-cancel" style="cursor: pointer">취소</a>`);
+});
+
+
+$("ul.replies").on("click", "a.modify-cancel",function () {
+    let i = $("a.modify-cancel").index(this);
+    $(this).parents("div").remove("modify");
+    $(this).parents("div").remove("modify-cancel");
+});
+
+$("a.register").on("click", function () {
+    $("div.register-form").show();
+    $(this).hide();
+});
+
+$("a.cancel").on("click", function () {
+    $("div.register-form").hide();
+    $("a.register").show();
+    $("input[name='replyWriter']").val("");
+    $("textarea[name='replyContent']").val("");
+});
+
+
+/*###### DOM ########*/
+$("a.finish").on("click", function () {
+    replyService.write(register);
+});
+function register() {
+    $("ul.replies").html("");
+    $("a.cancel").trigger("click");
+    replyService.getList(showList);
+}
+
+
+/*###### DOM ########*/
 function showList(replies){
     let text = "";
     replies.forEach(reply => {
@@ -27,12 +82,12 @@ function showList(replies){
                     <strong style="display: block">${reply.replyWriter}</strong>
                   <div>
                       <a class="modify-ready" style="display: none; cursor: pointer">수정</a>
-                      <a class="modify" style="display: none; cursor: pointer">수정 완료</a>
-                      &nbsp;&nbsp;<a class="remove">삭제</a>
+                      &nbsp;&nbsp;<a class="remove" style="cursor: pointer">삭제</a>
                   </div>
               </div>
               <div style="display: flex; justify-content: space-between">
                 <p class="reply-content">${reply.replyContent}</p>
+                <!--textarea class="reply-content-modify">${reply.replyContent}</textarea-->
                 <p style="text-align: right">
                     <strong class="date">
                         ${elapsedTime(reply.replyRegisterDate)}
@@ -61,11 +116,13 @@ function elapsedTime(date){
     for(const time of times){
         const gapTime = Math.floor(gap / time.time);
         if(gapTime > 0){
-            return `${gapTime}${time.name} 전`
+            return `${gapTime}${time.name} 전
+            `
         }
     }
     return "방금 전";
+}
 
-    }
+
 
 
