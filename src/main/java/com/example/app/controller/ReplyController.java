@@ -42,7 +42,7 @@ public class ReplyController {
     }
 
     //    댓글수정
-    @PostMapping("update")
+    @PostMapping(value = "update")
     public void modify(@RequestBody ReplyVO replyVO) {
         replyService.modify(replyVO);
     }

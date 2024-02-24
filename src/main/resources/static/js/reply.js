@@ -9,7 +9,7 @@ let replyService = (function (){
                     callback(replies)
                 }
             }
-        })
+        });
     }
 
     function write(callback) {
@@ -25,7 +25,21 @@ let replyService = (function (){
             }
         });
     }
-    return{getList: getList, write: write};
+
+    function modify(index ,callback) {
+        $.ajax({
+            url: "/replies/modify",
+            type: "post",
+            data: JSON.stringify({replyContent: $("textarea.reply-content-modify").eq(index).val(),replyId: $("textarea.reply-content-modify").eq(index).closest("li").data("reply-id")}),
+            contentType: "application/json;charset=utf-8",
+            success: function (){
+                if (callback) {
+                    callback(index);
+                }
+            }
+        });
+    }
+    return{getList: getList, write: write, modify: modify};
 })();
 
 replyService.getList(showList);
@@ -33,19 +47,39 @@ replyService.getList(showList);
 
 /*###### Event ########*/
 
-$("ul.replies").on("click", "a.modify-ready", function () {
+    let check = false
+$("ul.replies").on("click", "a.modify", function () {
+    let i = $("a.modify").index(this);
+    replyService.modify(i, update);
+});
+
+function update(i) {
+    $("p.reply-content").text($("textarea.reply-content-modify").eq(i).val());
+    $("a.modify-cancel").trigger("click");
+}
+
+    $("ul.replies").on("click", "a.modify-ready", function () {
+    if(check){return;}
     let i = $("a.modify-ready").index(this);
     $(this).hide();
     $("a.remove").eq(i).hide();
-    $(this).parents("div").append(`<a class="modify" style="cursor: pointer">수정완료</a>`);
-    $(this).parents("div").append(`&nbsp;&nbsp;<a class="modify-cancel" style="cursor: pointer">취소</a>`);
+    $(this).parent("div").append(`<a class="modify" style="cursor: pointer; margin: 5px">수정완료</a>`);
+    $(this).parent("div").append(`<a class="modify-cancel" style="cursor: pointer">취소</a>`);
+    $("p.reply-content").eq(i).hide();
+    $("p.reply-content").eq(i).closest("div").append(`<textarea name="replyContent" style="resize: none; width: 100%" cols="120" class="reply-content-modify">${$("p.reply-content").eq(i).text()}</textarea>`);
+    check = true;
 });
 
 
 $("ul.replies").on("click", "a.modify-cancel",function () {
-    let i = $("a.modify-cancel").index(this);
-    $(this).parents("div").remove("modify");
-    $(this).parents("div").remove("modify-cancel");
+    check = false;
+    let i = $(this).closest("div").attr("id");
+    $(this).parent("div").find("a").remove("a.modify");
+    $(this).parent("div").find("a").remove("a.modify-cancel");
+    $("p.reply-content").eq(i).closest("div").find("textarea").remove("textarea.reply-content-modify");
+    $("p.reply-content").eq(i).show();
+    $("a.modify-ready").eq(i).show();
+    $("a.remove").eq(i).show();
 });
 
 $("a.register").on("click", function () {
@@ -74,20 +108,22 @@ function register() {
 
 /*###### DOM ########*/
 function showList(replies){
+// <textarea class="reply-content-modify">${reply.replyContent}</textarea>
     let text = "";
-    replies.forEach(reply => {
+    replies.forEach((reply, i) => {
         text += `
-          <li style="display: block">
+          <li style="display: block" data-reply-id="${reply.replyId}" >
               <div style="display: flex; justify-content: space-between">
                     <strong style="display: block">${reply.replyWriter}</strong>
-                  <div>
-                      <a class="modify-ready" style="display: none; cursor: pointer">수정</a>
-                      &nbsp;&nbsp;<a class="remove" style="cursor: pointer">삭제</a>
+                  <div id="${i}">
+                      <a class="modify-ready" style="cursor: pointer; margin: 5px">수정</a>
+                      <a class="remove" style="cursor: pointer">삭제</a>
                   </div>
               </div>
               <div style="display: flex; justify-content: space-between">
-                <p class="reply-content">${reply.replyContent}</p>
-                <!--textarea class="reply-content-modify">${reply.replyContent}</textarea-->
+                <div>
+                    <p class="reply-content">${reply.replyContent}</p>
+                </div>
                 <p style="text-align: right">
                     <strong class="date">
                         ${elapsedTime(reply.replyRegisterDate)}
