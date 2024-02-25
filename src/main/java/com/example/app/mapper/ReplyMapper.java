@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface ReplyMapper {
     //    댓글목록
-    public List<ReplyVO> selectAllBoardId(@Param("page") int page,@Param("rowCount") int rowCount,@Param("boardId") Long boardId);
+    public List<ReplyVO> selectAllBoardId(@Param("page") int page,@Param("rowCount") int rowCount,@Param("boardId") Long boardId,@Param("types") String[] type, @Param("keyword") String keyword);
 
     //    댓글추가
     public void insert(ReplyVO replyVO);

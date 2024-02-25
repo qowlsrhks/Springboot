@@ -14,8 +14,8 @@ public class ReplyDAO {
     private final ReplyMapper replyMapper;
 
     //    댓글목록
-    public List<ReplyVO> findAllByBoardId(int page, int rowCount, Long boardId) {
-        return replyMapper.selectAllBoardId(page, rowCount, boardId);
+    public List<ReplyVO> findAllByBoardId(int page, int rowCount, Long boardId, String[] types, String keyword) {
+        return replyMapper.selectAllBoardId(page, rowCount, boardId, types, keyword);
     }
 
     //    댓글추가

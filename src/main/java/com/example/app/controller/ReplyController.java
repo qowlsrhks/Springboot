@@ -30,9 +30,9 @@ public class ReplyController {
     private final ReplyService replyService;
 
     //    댓글목록
-    @GetMapping("list/{boardId}/{page}/{rowCount}")
-    public List<ReplyVO> getList(@PathVariable Long boardId, @PathVariable int page, @PathVariable int rowCount) {
-        return replyService.getList(page, rowCount, boardId);
+    @GetMapping("list/{boardId}/{page}/{rowCount}/{type}/{keyword}")
+    public List<ReplyVO> getList(@PathVariable Long boardId, @PathVariable int page, @PathVariable int rowCount, @PathVariable String type, @PathVariable String keyword) {
+        return replyService.getList(page, rowCount, boardId,type,keyword);
     }
 
     //    댓글작성
@@ -42,7 +42,7 @@ public class ReplyController {
     }
 
     //    댓글수정
-    @PostMapping(value = "update")
+    @PostMapping("modify")
     public void modify(@RequestBody ReplyVO replyVO) {
         replyService.modify(replyVO);
     }

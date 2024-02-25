@@ -25,6 +25,8 @@
         textarea {
             resize: none;
         }
+        div#searchWrap { display: flex; text-align: center; }
+        select{width: 30%;}
     </style>
 </head>
 <body class="is-preload">
@@ -79,6 +81,20 @@
                                 <span class="icon solid fa-envelope"></span>
                                 <strong>댓글</strong>
                             </li>
+                            <div class="fields">
+                                <div class="field">
+                                    <div id="searchWrap">
+                                        <select name="type">
+                                            <option value="">검색 기준</option>
+                                            <option value="tcw">전체</option>
+                                            <option value="c">내용</option>
+                                            <option value="w">작성자</option>
+                                        </select>
+                                        <input type="text" name="keyword">
+                                        <a class="search button primary icon solid fa-search">검색</a>
+                                    </div>
+                                </div>
+                            </div>
                         </ul>
                         <a href="javascript:void(0)" class="register button primary small" style="width: 100%">댓글 등록</a>
                         <div style="display: none" class="register-form">
@@ -96,6 +112,8 @@
                             </div>
                         </div>
                         <ul class="replies"></ul>
+                        <a href="javascript:void(0)" class="more-replies button primary small" style="width: 100%">더보기</a>
+
                     </form>
                     <div class="paging" style="text-align: center"></div>
                 </div>

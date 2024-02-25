@@ -16,8 +16,9 @@ public class ReplyService {
     private final ReplyDAO replyDAO;
 
     //    댓글목록
-    public List<ReplyVO> getList( int page, int rowCount, Long boardId) {
-        return replyDAO.findAllByBoardId(page, rowCount, boardId);
+    public List<ReplyVO> getList( int page, int rowCount, Long boardId, String type, String keyword) {
+
+        return replyDAO.findAllByBoardId(page, rowCount, boardId,type.split(""),keyword);
     }
 
     //    댓글추가

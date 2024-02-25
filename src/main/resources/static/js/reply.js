@@ -26,20 +26,33 @@ let replyService = (function (){
         });
     }
 
-    function modify(index ,callback) {
+    function modify(callback) {
         $.ajax({
             url: "/replies/modify",
             type: "post",
-            data: JSON.stringify({replyContent: $("textarea.reply-content-modify").eq(index).val(),replyId: $("textarea.reply-content-modify").eq(index).closest("li").data("reply-id")}),
+            data: JSON.stringify({replyContent: $("textarea.reply-content-modify").val(),replyId: $("textarea.reply-content-modify").closest("li").data("reply-id")}),
             contentType: "application/json;charset=utf-8",
             success: function (){
                 if (callback) {
-                    callback(index);
+                    callback();
                 }
             }
         });
     }
-    return{getList: getList, write: write, modify: modify};
+
+    function remove(replyId, callback){
+        $.ajax({
+            url: `/replies/${replyId}`,
+            type: "delete",
+            success: function () {
+                if (callback) {
+                    callback(replyId);
+                }
+            },
+        });
+    }
+
+    return{getList: getList, write: write, modify: modify, remove: remove};
 })();
 
 replyService.getList(showList);
@@ -48,14 +61,52 @@ replyService.getList(showList);
 /*###### Event ########*/
 
     let check = false
-$("ul.replies").on("click", "a.modify", function () {
-    let i = $("a.modify").index(this);
-    replyService.modify(i, update);
+
+// 검색기능
+$("a.search").on("click", function () {
+    const type = $("select[name='type']");
+    const keyword = $("input[name='keyword']");
 });
 
+$("a.more-replies").on("click", function () {
+    replyPage++;
+    replyService.getList(showList);
+
+});
+
+
+// 삭제버튼 눌렀을 때
+$("ul.replies").on("click", "a.remove", function () {
+  let i = $("a.remove").index(this);
+  let replyId = $(this).closest("li").data("reply-id");
+    replyService.remove(replyId, deleteReply);
+});
+
+function deleteReply(replyId) {
+    let count = 0;
+    $("li").remove(`li[data-reply-id=${replyId}]`);
+    count++;
+    if(count == 10 * replyPage){
+        location.reload();
+    }
+}
+
+$("ul.replies").on("click", "a.modify", function () {
+    check = false;
+    let i = $(this).parent("div").attr("id");
+    replyService.modify(update);
+});
+
+// 수정완료 눌렀을 때 i번째있는 댓글만 수정되게 보이게함
 function update(i) {
-    $("p.reply-content").text($("textarea.reply-content-modify").eq(i).val());
-    $("a.modify-cancel").trigger("click");
+    const $p = $("textarea.reply-content-modify").closest("div").find($("p.reply-content"));
+    $p.text($("textarea.reply-content-modify").val());
+    $("a").remove("a.modify");
+    $("a").remove("a.modify-cancel");
+    $("textarea").remove("textarea.reply-content-modify");
+    $p.show();
+    $p.closest("li").find("a.modify-ready").show();
+    $p.closest("li").find("a.remove").show();
 }
 
     $("ul.replies").on("click", "a.modify-ready", function () {
@@ -74,19 +125,21 @@ function update(i) {
 $("ul.replies").on("click", "a.modify-cancel",function () {
     check = false;
     let i = $(this).closest("div").attr("id");
-    $(this).parent("div").find("a").remove("a.modify");
-    $(this).parent("div").find("a").remove("a.modify-cancel");
-    $("p.reply-content").eq(i).closest("div").find("textarea").remove("textarea.reply-content-modify");
+    $("a").remove("a.modify");
+    $("a").remove("a.modify-cancel");
+    $("textarea").remove("textarea.reply-content-modify");
     $("p.reply-content").eq(i).show();
     $("a.modify-ready").eq(i).show();
     $("a.remove").eq(i).show();
 });
 
+// 등록하기 누르면 작성자 댓글 쓰는 창 보이고 등록버튼 없어지게 하기
 $("a.register").on("click", function () {
     $("div.register-form").show();
     $(this).hide();
 });
 
+// 취소버튼 누르면 내용 작성자 삭제하고 창닫기
 $("a.cancel").on("click", function () {
     $("div.register-form").hide();
     $("a.register").show();
@@ -96,9 +149,12 @@ $("a.cancel").on("click", function () {
 
 
 /*###### DOM ########*/
+// 등록하기 누르면 등록
 $("a.finish").on("click", function () {
     replyService.write(register);
 });
+
+// 댓글 등록 창
 function register() {
     $("ul.replies").html("");
     $("a.cancel").trigger("click");
@@ -107,6 +163,7 @@ function register() {
 
 
 /*###### DOM ########*/
+// 댓글목록
 function showList(replies){
 // <textarea class="reply-content-modify">${reply.replyContent}</textarea>
     let text = "";

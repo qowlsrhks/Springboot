@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.app.mapper.ReplyMapper">
+    <sql id="search">
+        <if test="keyword != null">
+                <trim prefixOverrides="OR">
+                    <foreach item="type" collection="types">
+                        <trim prefix="OR">
+                            <choose>
+                                <when test="type == 'w'.toString()">
+                                    REPLY_WRITER  LIKE '%' || #{keyword} || '%'
+                                </when>
+                                <when test="type == 'c'.toString()">
+                                    REPLY_CONTENT  LIKE '%' || #{keyword} || '%'
+                                </when>
+                            </choose>
+                        </trim>
+                    </foreach>
+                </trim>
+        </if>
+    </sql>
+
     <select id="selectAllBoardId" resultType="replyVO">
         SELECT REPLY_ID, REPLY_CONTENT, REPLY_WRITER, REPLY_REGISTER_DATE, REPLY_UPDATE_DATE, BOARD_ID
         FROM
@@ -11,6 +30,7 @@
                     SELECT REPLY_ID, REPLY_CONTENT, REPLY_WRITER, REPLY_REGISTER_DATE, REPLY_UPDATE_DATE, BOARD_ID
                     FROM TBL_REPLY
                     WHERE BOARD_ID = ${boardId}
+                    <include refid="search"/>
                     ORDER BY REPLY_ID DESC
               )
             <![CDATA[
