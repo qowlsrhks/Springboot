@@ -18,6 +18,11 @@ public class ReplyDAO {
         return replyMapper.selectAllBoardId(page, rowCount, boardId, types, keyword);
     }
 
+    //다음 페이지 게시물 개수
+    public int findCountOfNextPage(int page, int rowCount, Long boardId, String[] types, String keyword) {
+        return replyMapper.selectCountOfNextPage(page, rowCount, boardId, types, keyword);
+    }
+
     //    댓글추가
     public void save(ReplyVO replyVO) {
         replyMapper.insert(replyVO);

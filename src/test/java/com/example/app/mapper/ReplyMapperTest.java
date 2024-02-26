@@ -21,8 +21,13 @@ public class ReplyMapperTest {
     @Test
     public void selectAllByBoardIdTest() {
 //        assertThat(replyMapper.selectAllBoardId(2, 10, 2101L)).hasSize(2);
-        replyMapper.selectAllBoardId(2, 10, 2101L).stream().map(ReplyVO::toString).forEach(log::info);
+        replyMapper.selectAllBoardId(2, 10, 2101L,null,null).stream().map(ReplyVO::toString).forEach(log::info);
 
+    }
+
+    @Test
+    public void selectCountOfNextPage() {
+        log.info(replyMapper.selectCountOfNextPage(1,10,2101L,null,null)+"건");
     }
 
 //    댓글 작성
@@ -38,7 +43,7 @@ public class ReplyMapperTest {
 //    댓글 수정
     @Test
     public void updateTest() {
-        ReplyVO replyVO = replyMapper.selectAllBoardId(1,10,2101L).get(0);
+        ReplyVO replyVO = replyMapper.selectAllBoardId(1,10,2101L,null,null).get(0);
         replyVO.setReplyContent("수정된 내용1");
         replyMapper.update(replyVO);
     }

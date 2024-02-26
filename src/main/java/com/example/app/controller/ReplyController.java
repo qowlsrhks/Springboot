@@ -1,6 +1,7 @@
 package com.example.app.controller;
 
 
+import com.example.app.domain.dto.ReplyDTO;
 import com.example.app.domain.vo.ReplyVO;
 import com.example.app.service.ReplyService;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,9 @@ public class ReplyController {
     private final ReplyService replyService;
 
     //    댓글목록
-    @GetMapping("list/{boardId}/{page}/{rowCount}/{type}/{keyword}")
-    public List<ReplyVO> getList(@PathVariable Long boardId, @PathVariable int page, @PathVariable int rowCount, @PathVariable String type, @PathVariable String keyword) {
-        return replyService.getList(page, rowCount, boardId,type,keyword);
+    @GetMapping("list/{boardId}/{page}/{rowCount}")
+    public ReplyDTO getList(@PathVariable Long boardId, @PathVariable int page, @PathVariable int rowCount, String type, String keyword) {
+        return new ReplyDTO(replyService.getList(page, rowCount, boardId, type, keyword), replyService.getCountOfNextPage(page, rowCount, boardId, type, keyword));
     }
 
     //    댓글작성

@@ -2,11 +2,11 @@
 let replyService = (function (){
     function getList (callback){
         $.ajax({
-            url: `/replies/list/${boardId}/${replyPage}/${rowCount}`,
+            url: `/replies/list/${boardId}/${replyPage}/${rowCount}?type=${replyType}&keyword=${replyKeyword}`,
             dataType: "json",
-            success: function (replies){
+            success: function (replyDTO){
                 if(callback){
-                    callback(replies)
+                    callback(replyDTO)
                 }
             }
         });
@@ -61,11 +61,26 @@ replyService.getList(showList);
 /*###### Event ########*/
 
     let check = false
+// 엔터를 눌렀을 때
+$("input[name=keyword]").on("keydown", function (e) {
+    if(e.keyCode == 13){
+        e.preventDefault();
+        $("a.search").trigger("click");
+    }
+});
+
 
 // 검색기능
 $("a.search").on("click", function () {
-    const type = $("select[name='type']");
-    const keyword = $("input[name='keyword']");
+    replyType = $("select[name='type']").val();
+    replyKeyword = $("input[name='keyword']").val();
+
+    if (!replyType || !replyKeyword) {
+        return;
+    }
+
+    $("ul.replies").html("");
+    replyService.getList(showList);
 });
 
 $("a.more-replies").on("click", function () {
@@ -164,9 +179,22 @@ function register() {
 
 /*###### DOM ########*/
 // 댓글목록
-function showList(replies){
-// <textarea class="reply-content-modify">${reply.replyContent}</textarea>
+function showList(replyDTO){
+    let replies = replyDTO.replies;
+    let countOfNextPage = replyDTO.countOfNextPage;
     let text = "";
+    if(replies.length == 0 && replyPage == 1){
+        text=`
+            <p>댓글이 없습니다!</p>
+        `
+        $("a.more-replies").hide();
+    }
+    if(countOfNextPage == 0){
+        $("a.more-replies").hide();
+    }
+    else{
+        $("a.more-replies").show();
+    }
     replies.forEach((reply, i) => {
         text += `
           <li style="display: block" data-reply-id="${reply.replyId}" >

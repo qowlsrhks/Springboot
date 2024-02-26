@@ -21,6 +21,11 @@ public class ReplyService {
         return replyDAO.findAllByBoardId(page, rowCount, boardId,type.split(""),keyword);
     }
 
+    //다음 페이지 게시물 개수
+    public int getCountOfNextPage(int page, int rowCount, Long boardId, String type, String keyword) {
+        return replyDAO.findCountOfNextPage(page, rowCount, boardId, type.split(""), keyword);
+    }
+
     //    댓글추가
     public void register(ReplyVO replyVO) {
         replyDAO.save(replyVO);

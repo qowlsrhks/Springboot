@@ -17,7 +17,7 @@ public class replyDaoTest {
     @Test
     public void selectAllByBoardIdTest() {
 //        assertThat(replyDAO.selectAllBoardId(2, 10, 2101L)).hasSize(2);
-        replyDAO.findAllByBoardId(1, 10, 2101L).stream().map(ReplyVO::toString).forEach(log::info);
+        replyDAO.findAllByBoardId(1, 10, 2101L,null,null).stream().map(ReplyVO::toString).forEach(log::info);
 
     }
 
@@ -34,7 +34,7 @@ public class replyDaoTest {
     //    댓글 수정
     @Test
     public void updateTest() {
-        ReplyVO replyVO = replyDAO.findAllByBoardId(1,10,2101L).get(0);
+        ReplyVO replyVO = replyDAO.findAllByBoardId(1,10,2101L,null,null).get(0);
         replyVO.setReplyContent("수정된 내용2");
         replyDAO.setReply(replyVO);
     }

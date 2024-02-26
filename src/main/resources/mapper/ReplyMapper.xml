@@ -2,8 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.app.mapper.ReplyMapper">
     <sql id="search">
-        <if test="keyword != null">
-                <trim prefixOverrides="OR">
+        <if test="keyword != null and !keyword.equals('')">
+                AND
+                <trim prefix="(" prefixOverrides="OR" suffix=")">
                     <foreach item="type" collection="types">
                         <trim prefix="OR">
                             <choose>
@@ -39,6 +40,28 @@
         )
         <![CDATA[
         WHERE R > ((#{page} - 1) * #{rowCount})
+        ]]>
+    </select>
+
+    <select id="selectCountOfNextPage" resultType="_int">
+        SELECT COUNT(REPLY_ID)
+        FROM
+        (
+        SELECT ROWNUM R, REPLY_ID
+        FROM
+        (
+        SELECT REPLY_ID, REPLY_CONTENT, REPLY_WRITER, REPLY_REGISTER_DATE, REPLY_UPDATE_DATE, BOARD_ID
+        FROM TBL_REPLY
+        WHERE BOARD_ID = ${boardId}
+        <include refid="search"/>
+        ORDER BY REPLY_ID DESC
+        )
+        <![CDATA[
+            WHERE ROWNUM <= (#{page} + 1) * #{rowCount}
+            ]]>
+        )
+        <![CDATA[
+        WHERE R > #{page} * #{rowCount}
         ]]>
     </select>
 
