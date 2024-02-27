@@ -17,7 +17,7 @@ public class ReplyDTO {
 
     public ReplyDTO(List<ReplyVO> ReplyVOs,int countOfNextPage) {
         this.replies = ReplyVOs;
-        this.countOfNextPage = getCountOfNextPage();
+        this.countOfNextPage = countOfNextPage;
 
     }
 }

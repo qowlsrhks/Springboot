@@ -61,10 +61,11 @@ replyService.getList(showList);
 /*###### Event ########*/
 
     let check = false
-// 엔터를 눌렀을 때
+// 엔터를 눌렀을 때 검색 버튼이 눌리게하기
 $("input[name=keyword]").on("keydown", function (e) {
     if(e.keyCode == 13){
         e.preventDefault();
+        replyPage = 1;
         $("a.search").trigger("click");
     }
 });
@@ -78,7 +79,7 @@ $("a.search").on("click", function () {
     if (!replyType || !replyKeyword) {
         return;
     }
-
+    replyPage = 1;
     $("ul.replies").html("");
     replyService.getList(showList);
 });
@@ -171,6 +172,7 @@ $("a.finish").on("click", function () {
 
 // 댓글 등록 창
 function register() {
+    replyPage = 1;
     $("ul.replies").html("");
     $("a.cancel").trigger("click");
     replyService.getList(showList);
